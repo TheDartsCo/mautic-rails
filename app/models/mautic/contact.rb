@@ -44,7 +44,5 @@ module Mautic
     def dnc?
       doNotContact.present?
     end
-
-
   end
 end

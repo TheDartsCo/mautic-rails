@@ -1,20 +1,53 @@
-# Mautic rails 
-RoR helper / wrapper for Mautic API and forms
+# Mautic-Redis rails
+A fork from [activo-inc fork's][activo-inc fork] from [luk4s code][luk4s code] which is
+RoR helper / wrapper for Mautic API and forms. But it is using Redis instead of DB to store the credentials.
 
-*Rails 4.2.8+, 5.1+ compatible*
+## Why a fork from a fork?
+- The original code is DB dependent, you must create a table called `mautic_connections` in your DB.
+- The original code has some routes and views which is not a good idea to expose.
+- The `activo-inc fork's` has some good enhancements and additions.
+
+## Then, what's the difference in this fork?
+- Added Redis integration to save the tokens.
+- Removed `some` un-needed files (i.e. assets).
+- Removed views and un-needed controller methods.
+- Followed RuboCop in some recommendations.
+
 ## Usage
-### Gem provides API connection to your Mautic(s)
-  1. Create mautic connection
-  2. Authorize it
-      
-      In mautic you need add API oauth2 login.
-      For URI callback allow:
-      ```
-      http://localhost:3000/mautic/connections/:ID/oauth2
-      ```
-      ID = is your Mautic::Connection ID
-  
-   Find connection which you want to use:
+### Install
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'mautic-redis', github: 'TheDartsCo/mautic-redis-rails'
+```
+
+### Configure
+  1. Create Mautic Oauth2 API.
+  3. Create `config/initializers/mautic.rb` and fill in your credentials.
+```ruby
+Mautic.configure do |config|
+  # Mautic URL
+  config.mautic_url = 'https://mautic.my.app'
+  # Public Key
+  config.public_key = 'public_key'
+  # Secret Key
+  config.secret_key = 'secret_key'
+  # Redis Connection Config
+  config.redis_config = { url: 'redis://127.0.0.1:6379' }
+end
+```
+
+  3. Add to `config/routes.rb`
+```ruby
+mount Mautic::Engine => '/mautic'
+```
+
+### Use
+  1. Create Mautic Oauth2 API
+  2. Store the API Public Key and Secret Key in `mautic.rb` initializer file
+  3. Authorize it by visiting `your-website-url/mautic/authorize`
+  4. Then to use it in your app,
+ 
   ```ruby
   m = Mautic::Connection.last
   ```
@@ -42,7 +75,7 @@ RoR helper / wrapper for Mautic API and forms
   contact.errors # => [{"code"=>400, "message"=>"email: This field is required.", "details"=>{"email"=>["This field is required."]}}]
   ```
   Of course you can use more than contact: `assets`, `emails`, `companies`, `forms`, `points` ...
-### Gem provides simple Mautic form submit
+### Gem provides simple Mautic form submit [Not tested]
 There are two options of usage:
   1. Use default mautic url from configuration and shortcut class method:
   ```ruby
@@ -62,7 +95,7 @@ There are two options of usage:
   m.push # push data to mautic 
   ```
   
-### Webhook receiver
+### Webhook receiver [Not tested]
 Receive webhook from mautic, parse it and prepare for use.
 
   1. add concern to your controller
@@ -71,46 +104,17 @@ Receive webhook from mautic, parse it and prepare for use.
   2. in routes must be specify `:mautic_id`, for example:
   
           post "webhook/:mautic_id", action: "webhook", on: :collection
-          
 
-## Installation
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'mautic', '~>0.1'
-```
-
-And then execute:
-```bash
-$ bundle
-```
-
-Or install it yourself as:
-```bash
-$ gem install mautic
-```
-
-## Configuration
-
-add to `config/initializers/mautic.rb`:
-```ruby
-Mautic.configure do |config|
-  # This is for oauth handshake token url. I need to know where your app listen
-  config.base_url = "https://my-rails-app.com"
-  # OR it can be Proc 
-  # *optional* This is your default mautic URL - used in form helper 
-  config.mautic_url = "https://mautic.my.app"
-end
-```
-
-add to `config/routes.rb`
-```ruby
-mount Mautic::Engine => "/mautic"
-
-```
+## TODO 
+- A lot of cleaning.
+- Fix all tests.
+- Make sure the forms and webhook are working.
 
 ## Contributing
 Ideas and pull requests are welcome!
 
 ## License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+[activo-inc fork]: https://github.com/activo-inc/mautic-rails
+[luk4s code]: https://github.com/luk4s/mautic-rails

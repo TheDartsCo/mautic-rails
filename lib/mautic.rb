@@ -1,11 +1,12 @@
-require "oauth2"
-require "mautic/engine"
+require 'oauth2'
+require 'mautic/engine'
 
 module Mautic
   include ::ActiveSupport::Configurable
 
   autoload :FormHelper, 'mautic/form_helper'
   autoload :Proxy, 'mautic/proxy'
+  autoload :RedisConnector, 'mautic/redis_connector'
   autoload :Model, 'mautic/model'
   autoload :Submissions, 'mautic/submissions'
 
@@ -38,7 +39,9 @@ module Mautic
     def initialize(response, message = nil)
       @response = response
       json_body = JSON.parse(response.body) rescue {}
-      @errors = Array(json_body['errors']).inject({}) { |mem, var| mem.merge!(var['details']); mem }
+      @errors = Array(json_body['errors']).each_with_object({}) do |var, mem|
+        mem.merge!(var['details'])
+      end
       message ||= @errors.collect { |field, msg| "#{field}: #{msg.join(', ')}" }.join('; ')
       super(response, message)
     end
@@ -52,19 +55,13 @@ module Mautic
   end
 
   configure do |config|
-    # This is URL your application - its for oauth callbacks
-    config.base_url = "http://localhost:3000"
-    # *optional* This is your default mautic URL - used in form helper
-    config.mautic_url = "https://mautic.my.app"
+    # Mautic URL
+    config.mautic_url = 'https://mautic.my.app'
+    # Public Key
+    config.public_key = 'public_key'
+    # Secret Key
+    config.secret_key = 'secret_key'
+    # Redis Connection Config
+    config.redis_config = { url: 'redis://127.0.0.1:6379' }
   end
-  # Your code goes here...
-
-  if Rails.version.start_with? "4"
-    class DummyMigrationClass < ActiveRecord::Migration
-    end
-  else
-    class DummyMigrationClass < ActiveRecord::Migration[4.2]
-    end
-  end
-
 end

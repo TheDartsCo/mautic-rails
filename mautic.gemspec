@@ -5,13 +5,13 @@ require 'mautic/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = 'mautic'
+  s.name        = 'mautic-redis'
   s.version     = Mautic::VERSION
-  s.authors     = ['Lukáš Pokorný']
-  s.email       = ['pokorny@luk4s.cz']
-  s.homepage    = 'https://github.com/luk4s/mautic-rails'
+  s.authors     = ['Mahmoud Abdel-Fattah']
+  s.email       = ['maf@thedarts.co']
+  s.homepage    = 'https://github.com/TheDartsCo/mautic-redis-rails'
   s.summary     = 'Ruby on Rails Mautic integration'
-  s.description = 'Rails client for Mautic API. Provide wrapper for push to mautic form'
+  s.description = 'Rails client for Mautic API. Provide wrapper for push to Mautic form'
   s.license     = 'MIT'
 
   s.required_ruby_version = '>= 2.3'
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails', '>= 4.2.8'
   # s.add_dependency 'oauth', '~> 0.5.3'
   s.add_dependency 'oauth2', '~> 1.4'
+  s.add_dependency 'redis', '~> 4.1'
   s.add_dependency 'rest-client', '~> 2.0'
 
   s.add_development_dependency 'sqlite3', '~> 1.3'

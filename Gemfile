@@ -11,6 +11,9 @@ gemspec
 # your gem to rubygems.org.
 
 # To use a debugger
-# gem 'byebug', group: [:development, :test]
+group :development, :test do
+  gem 'byebug'
+  gem 'pry-byebug'
+end
+
 gem 'simplecov', require: false, group: :test
-# gem "rails", "4.2.8"

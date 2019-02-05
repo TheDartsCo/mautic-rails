@@ -11,7 +11,10 @@ module Mautic
     end
 
     def form_submissions
-      @forms ||= Array.wrap(@params.require("mautic.form_on_submit")).collect { |data| ::Mautic::Submissions::Form.new(@connection, data["submission"]) if data["submission"] }.compact
+      @forms ||= Array.wrap(@params.require('mautic.form_on_submit'))
+                      .collect do |data|
+        ::Mautic::Submissions::Form.new(@connection, data['submission']) if data['submission']
+      end.compact
     end
 
   end

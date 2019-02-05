@@ -1,12 +1,19 @@
 module Mautic
-  class Connection < ApplicationRecord
+  class Connection
+    attr_accessor :base_url, :mautic_url, :public_key, :secret_key, :token,
+                  :refresh_token, :redis_connector
 
-    self.table_name = 'mautic_connections'
+    def initialize(args = {})
+      @base_url = args[:base_url] if args.present?
 
-    validates :url, presence: true, format: URI::regexp(%w(http https))
-    validates :client_id, :secret, presence: true, unless: :new_record?
+      @redis_connector = RedisConnector.new
+      @token = @redis_connector.token
+      @refresh_token = @redis_connector.refresh_token
 
-    alias_attribute :access_token, :token
+      @mautic_url = Mautic.config.mautic_url
+      @public_key = Mautic.config.public_key
+      @secret_key = Mautic.config.secret_key
+    end
 
     # @param [ActionController::Parameters] params
     def self.receive_webhook(params)
@@ -14,26 +21,43 @@ module Mautic
     end
 
     def client
-      raise NotImplementedError
+      @client ||= OAuth2::Client.new(
+        @public_key,
+        @secret_key,
+        site: @mautic_url,
+        authorize_url: 'oauth/v2/authorize',
+        token_url: 'oauth/v2/token',
+        raise_errors: false
+      )
     end
 
     def authorize
-      raise NotImplementedError
+      client.auth_code.authorize_url(redirect_uri: callback_url)
     end
 
     def get_code(code)
-      raise NotImplementedError
+      response = client.auth_code.get_token(code, redirect_uri: callback_url)
+
+      return response unless response.params['errors']
+
+      raise response.params['errors'][0]['message']
     end
 
     def connection
-      raise NotImplementedError
+      @connection ||= OAuth2::AccessToken.new(client,
+                                              @token,
+                                              refresh_token: @refresh_token)
     end
 
     def refresh!
-      raise NotImplementedError
+      @connection = connection.refresh!
+      @redis_connector.token = @connection.token
+      @redis_connector.refresh_token = @connection.refresh_token
+      @connection
     end
 
-    %w(assets campaigns categories companies emails forms messages notes notifications pages points roles stats users).each do |entity|
+    %w[assets campaigns categories companies emails forms messages
+       notes notifications pages points roles stats users].each do |entity|
       define_method entity do
         Proxy.new(self, entity)
       end
@@ -49,18 +73,19 @@ module Mautic
 
     def request(type, path, params = {})
       @last_request = [type, path, params]
-      response = raise NotImplementedError
+      response = connection.request(type, path, params)
       parse_response(response)
+    end
+
+    def update(attributes)
+      @redis_connector.token = attributes[:token]
+      @redis_connector.refresh_token = attributes[:refresh_token]
     end
 
     private
 
     def callback_url
-      if (conf = Mautic.config.base_url).is_a?(Proc)
-        conf = conf.call(self)
-      end
-
-      URI.parse(conf)
+      "#{@base_url}#{Mautic::Engine.routes.url_helpers.oauth2_path}"
     end
 
     def parse_response(response)

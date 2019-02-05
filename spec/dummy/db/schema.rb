@@ -9,18 +9,3 @@
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
 # It's strongly recommended that you check this file into your version control system.
-
-ActiveRecord::Schema.define(version: 2017_10_28_082047) do
-
-  create_table "mautic_connections", force: :cascade do |t|
-    t.string "type"
-    t.string "url"
-    t.string "client_id"
-    t.string "secret"
-    t.string "token"
-    t.string "refresh_token"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-end

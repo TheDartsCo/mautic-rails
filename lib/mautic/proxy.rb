@@ -31,14 +31,14 @@ module Mautic
         end
       else
         results = where(options)
-        results.each{|i| yield i } if block_given?
+        results.each { |i| yield i } if block_given?
       end
       results
     end
 
     def where(params = {})
       q =  params.reverse_merge(@options[:default_params] || {})
-      json = @connection.request(:get, "api/#{@endpoint}", {params: q })
+      json = @connection.request(:get, "api/#{@endpoint}", { params: q })
       @last_response = json
       json[@endpoint].collect do |id, attributes|
         @target.new(@connection, attributes || id)
@@ -54,7 +54,5 @@ module Mautic
       @last_response = json
       @target.new(@connection, json[@endpoint.singularize])
     end
-
-
   end
 end
