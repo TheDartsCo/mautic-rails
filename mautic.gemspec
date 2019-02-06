@@ -5,7 +5,7 @@ require 'mautic/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = 'mautic-redis'
+  s.name        = 'mautic'
   s.version     = Mautic::VERSION
   s.authors     = ['Mahmoud Abdel-Fattah']
   s.email       = ['maf@thedarts.co']
