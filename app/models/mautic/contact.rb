@@ -13,10 +13,13 @@ module Mautic
 
     def assign_attributes(source = {})
       super
+
+      return unless source
+
       self.attributes = {
-        tags: (source['tags'] || []).collect{|t| Mautic::Tag.new(@connection, t)},
-        doNotContact: source['doNotContact'],
-      } if source
+        tags: (source['tags'] || []).collect { |t| Mautic::Tag.new(@connection, t) },
+        doNotContact: source['doNotContact']
+      }
     end
 
     def add_dnc(comments: '')

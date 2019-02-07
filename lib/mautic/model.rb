@@ -98,7 +98,13 @@ module Mautic
     def update(force = false)
       return false if changes.blank?
       begin
-        json = @connection.request((force && :put || :patch), "api/#{endpoint}/#{id}/edit", { body: to_h })
+        json = @connection.request(
+          (force && :put || :patch),
+          "api/#{endpoint}/#{id}/edit",
+          {
+            body: attributes.select{ |_k,v| v.present? }
+          }
+        )
         self.attributes = json[field_name.singularize]
         clear_changes
       rescue ValidationError => e
