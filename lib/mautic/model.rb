@@ -46,7 +46,7 @@ module Mautic
 
       def create(connection, params = {})
         begin
-          json = connection.request(:post, "api/#{endpoint}/#{id && "#{id}/"}new", { body: params })
+          json = connection.request(:post, "api/#{endpoint}/new", { body: params })
 
           instance = new(connection, json[field_name.singularize])
         rescue ValidationError => e
