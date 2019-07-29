@@ -18,7 +18,7 @@ RoR helper / wrapper for Mautic API and forms. But it is using Redis instead of 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'mautic-redis', github: 'TheDartsCo/mautic-redis-rails'
+gem 'mautic', github: 'TheDartsCo/mautic-redis-rails'
 ```
 
 ### Configure
