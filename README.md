@@ -49,7 +49,7 @@ mount Mautic::Engine => '/mautic'
   4. Then to use it in your app,
  
   ```ruby
-  m = Mautic::Connection.last
+  m = Mautic::Connection.new
   ```
   Get specify contact:
   ```ruby
