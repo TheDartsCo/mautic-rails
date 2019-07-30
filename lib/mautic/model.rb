@@ -117,7 +117,7 @@ module Mautic
 
     def create
       begin
-        json = @connection.request(:post, "api/#{endpoint}/#{id}/new", { body: to_h })
+        json = @connection.request(:post, "api/#{endpoint}/new", { body: to_h })
         self.attributes = json[field_name.singularize]
         clear_changes
       rescue ValidationError => e
