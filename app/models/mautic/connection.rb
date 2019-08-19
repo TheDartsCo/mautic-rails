@@ -95,9 +95,9 @@ module Mautic
       when 404
         raise Mautic::RecordNotFound.new(response)
       when 401
-        raise Mautic::AuthorizeError.new(response, nil, @last_request) if @try_to_authorize
-        @try_to_authorize = true
-        authorize
+        raise Mautic::AuthorizeError.new(response, nil, @last_request) if @try_to_refresh
+        @try_to_refresh = true
+        refresh!
         json = request(*@last_request)
       when 200, 201
         json = JSON.parse(response.body) rescue {}
