@@ -94,6 +94,11 @@ module Mautic
         raise Mautic::ValidationError.new(response)
       when 404
         raise Mautic::RecordNotFound.new(response)
+      when 401
+        raise Mautic::AuthorizeError.new(response, nil, @last_request) if @try_to_authorize
+        @try_to_authorize = true
+        authorize
+        json = request(*@last_request)
       when 200, 201
         json = JSON.parse(response.body) rescue {}
         Array(json['errors']).each do |error|
@@ -110,11 +115,10 @@ module Mautic
           end
         end
       else
-        raise Mautic::RequestError.new(response)
+        raise Mautic::RequestError.new(response, nil, @last_request)
       end
 
       json
     end
-
   end
 end

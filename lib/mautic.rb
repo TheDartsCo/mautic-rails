@@ -14,7 +14,7 @@ module Mautic
 
     attr_reader :response, :errors
 
-    def initialize(response, message = nil)
+    def initialize(response, message = nil, request = [])
       @errors ||= []
       @response = response
       json_body = JSON.parse(response.body) rescue {}
@@ -25,7 +25,7 @@ module Mautic
         @errors << error['message']
         msg
       end.join(', ')
-
+      message += request.join(', ')
       super(message)
     end
 
