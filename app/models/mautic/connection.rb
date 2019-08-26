@@ -71,6 +71,10 @@ module Mautic
       Proxy.new(self, 'tags')
     end
 
+    def activities
+      Proxy.new(self, 'activities')
+    end
+
     def request(type, path, params = {})
       @last_request = [type, path, params]
       response = connection.request(type, path, params)
