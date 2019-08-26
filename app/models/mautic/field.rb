@@ -5,7 +5,7 @@ module Mautic
     end
 
     def self.add_field(connection, names, opts)
-      make_field = -> name { Field.new(connection, opts.merge(label: name.to_s, alias: name.to_s)) }
+      make_field = ->(name) { Field.new(connection, opts.merge(label: name.to_s, alias: name.to_s)) }
       if names.is_a?(Array)
         fields = names.map(&make_field)
         fields.each(&:create)

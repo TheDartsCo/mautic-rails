@@ -1,7 +1,6 @@
 module Mautic
   # Represent received web hook
   class WebHook
-
     attr_reader :connection
     # @param [Mautic::Connection] connection
     # @param [ActionController::Parameters] params
@@ -16,6 +15,5 @@ module Mautic
         ::Mautic::Submissions::Form.new(@connection, data['submission']) if data['submission']
       end.compact
     end
-
   end
 end
