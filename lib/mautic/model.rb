@@ -46,7 +46,8 @@ module Mautic
 
       def create(connection, params = {})
         begin
-          json = connection.request(:post, "api/#{endpoint}/new", body: params)
+          json = connection.request(:post, "api/#{endpoint}/new", { body: params })
+
           instance = new(connection, json[field_name.singularize])
         rescue ValidationError => e
           if instance.nil?
@@ -118,7 +119,7 @@ module Mautic
       begin
         json = @connection.request(
           :post,
-          "api/#{endpoint}/#{id}/new",
+          "api/#{endpoint}new",
           {
             body: attributes.select{ |_k,v| v.present? }
           }
