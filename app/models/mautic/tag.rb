@@ -1,6 +1,5 @@
 module Mautic
   class Tag < Model
-
     # alias for attribute :tag
     def name
       tag
@@ -9,6 +8,5 @@ module Mautic
     def name=(name)
       self.tag = name
     end
-
   end
 end

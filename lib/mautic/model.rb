@@ -119,7 +119,7 @@ module Mautic
       begin
         json = @connection.request(
           :post,
-          "api/#{endpoint}new",
+          "api/#{endpoint}/new",
           {
             body: attributes.select{ |_k,v| v.present? }
           }

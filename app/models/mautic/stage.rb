@@ -2,7 +2,7 @@ module Mautic
   class Stage < Model
     def self.all(connection, params = {})
       json = connection.request(:get, "api/#{endpoint}", params: params)
-      json[field_name].map { |j| self.new(connection, j) }
+      json[field_name].map { |j| new(connection, j) }
     end
 
     def add_contact(contact)
@@ -17,13 +17,15 @@ module Mautic
 
     def self.add_contact(connection: nil, stage: nil, contact: nil)
       return if stage.blank? || contact.blank?
-      stage = stage.is_a?(self) ? stage : self.find(connection, stage)
+
+      stage = stage.is_a?(self) ? stage : find(connection, stage)
       stage.add_contact contact
     end
 
     def self.remove_contact(connection: nil, stage: nil, contact: nil)
       return if stage.blank? || contact.blank?
-      stage = stage.is_a?(self) ? stage : self.find(connection, stage)
+
+      stage = stage.is_a?(self) ? stage : find(connection, stage)
       stage.remove_contact contact
     end
   end
