@@ -59,7 +59,7 @@ module Mautic
       @connection.request(:get, %(api/contacts/#{id}/segments))['lists'].values
     end
 
-    def add_to_company(company: nil)
+    def add_to_company(company = nil)
       return if company.blank?
 
       company = company.is_a?(Mautic::Company) ? company : Mautic::Company.find(@connection, company)
